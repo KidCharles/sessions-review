@@ -2,9 +2,11 @@ require('dotenv').config()
 const massive = require('massive')
 const express = require('express')
 const bodyParser = require('body-parser')
+//just in case anything wierd happens
 const cors = require('cors')
 const ctrl = require('./controller')
 const session = require('express-session')
+//this is middleware that checks if the user has a session on it, if not assigns one
 const checkUserSession = require('./middleware/checkUserSession')
 
 const {
@@ -28,6 +30,7 @@ app.use(session({
     saveUninitialized: true
 }))
 
+//this checks if they have a session, then if not assigns one, check checkUserSession.js
 app.use(checkUserSession)
 
 app.post('/api/login', ctrl.loginUser)

@@ -1,3 +1,4 @@
+//this library helps us not store passwords with salts 
 const bcrypt = require('bcryptjs')
 var session_id_count = 1
 
@@ -10,10 +11,11 @@ module.exports = {
             if (user.length !== 0) {
                 res.status(200).send('Username Taken. Try another.')
             } else {
+                //these two lines are very important
                 const salt = bcrypt.genSaltSync(10)
-                console.log('salt: ', salt)
+                // console.log('salt: ', salt)
                 const hash = bcrypt.hashSync(password, salt)
-                console.log('hash: ', hash)
+                // console.log('hash: ', hash)
 
                 db.registerUser([username, hash]).then((user) => {
                     req.session.user.session_id = session_id_count
@@ -31,6 +33,7 @@ module.exports = {
         const db = req.app.get('db')
         db.checkUsername([username]).then(user => {
             if (user.length !== 0) {
+                //in sequal, it will pass info back as an array, this next line compares the password, and the Hashpassword stored in the DB
                 const validPassword = bcrypt.compareSync(password, user[0].password)
                 if (validPassword) {
                     req.session.user.session_id = session_id_count
